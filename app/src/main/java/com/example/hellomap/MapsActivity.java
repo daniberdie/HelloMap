@@ -100,7 +100,7 @@ public class MapsActivity extends AppCompatActivity implements
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
+        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) { 
             return;
         }
 
