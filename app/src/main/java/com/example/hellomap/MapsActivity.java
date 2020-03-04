@@ -7,7 +7,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 
@@ -16,6 +19,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import android.widget.Toast;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class MapsActivity extends AppCompatActivity implements
         GoogleMap.OnMyLocationButtonClickListener,
@@ -82,7 +89,12 @@ public class MapsActivity extends AppCompatActivity implements
 
     @Override
     public void onMyLocationClick(@NonNull Location location) {
-        Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
+
+        String city = this.getCity(this, location.getLatitude(), location.getLongitude());
+
+        Toast.makeText(this, "Latitude:    " + location.getLatitude() + "\n" +
+                                          "Longitude: " + location.getLongitude() + "\n" +
+                                          "City:            " + city, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -118,5 +130,22 @@ public class MapsActivity extends AppCompatActivity implements
     private void showMissingPermissionError() {
         PermissionUtils.PermissionDeniedDialog
                 .newInstance(true).show(getSupportFragmentManager(), "dialog");
+    }
+
+    public String getCity(Context context, double LATITUDE, double LONGITUDE) {
+        try {
+            Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+
+            List<Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
+            if (addresses != null && addresses.size() > 0) {
+
+                String city = addresses.get(0).getLocality();
+
+                return city;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }
